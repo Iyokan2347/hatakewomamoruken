@@ -243,3 +243,138 @@ document.getElementById("game").innerHTML=
 "<button onclick='useHerb()'>🌿薬草</button>";
 
 }
+function attack(power){
+
+enemyHp-=power;
+
+if(enemyHp<=0){
+
+if(enemyName==="暴走モグラ"){
+
+gainExp(5);
+gainGold(10);
+
+saveGame();
+
+document.getElementById("game").innerHTML=
+
+"<h2>🎉勝利！</h2>"+
+
+"<p>暴走モグラを倒した！</p>"+
+
+"<p>⭐EXP +5</p>"+
+
+"<p>💰GOLD +10</p>"+
+
+"<button onclick='startWolfKing()'>森の奥へ</button>";
+
+return;
+
+}
+
+if(enemyName==="森狼王"){
+
+gainExp(15);
+gainGold(50);
+
+saveGame();
+
+document.getElementById("game").innerHTML=
+
+"<h2>👑森狼王撃破！</h2>"+
+
+"<p>村に平和が戻った！</p>"+
+
+"<p>⭐EXP +15</p>"+
+
+"<p>💰GOLD +50</p>"+
+
+"<p>🐔チャボ『やったコケーー！！』</p>"+
+
+"<h3>Ver0.5クリア！</h3>"+
+
+"<button onclick='showVillage()'>🏡村へ戻る</button>";
+
+return;
+
+}
+
+}
+
+let damage=Math.floor(Math.random()*4)+3;
+
+player.hp-=damage;
+
+if(player.hp<0){
+player.hp=0;
+}
+
+updateStatus();
+
+if(player.hp<=0){
+
+document.getElementById("game").innerHTML=
+
+"<h2>💀ゲームオーバー</h2>"+
+
+"<p>畑は魔物に荒らされてしまった…</p>"+
+
+"<button onclick='location.reload()'>もう一度挑戦</button>";
+
+return;
+
+}
+
+document.getElementById("enemyhp").innerText=
+"敵HP:"+enemyHp;
+
+}
+
+function useHerb(){
+
+if(player.herb<=0){
+
+alert("薬草がない！");
+
+return;
+
+}
+
+player.herb--;
+
+player.hp+=10;
+
+if(player.hp>player.maxHp){
+
+player.hp=player.maxHp;
+
+}
+
+updateStatus();
+
+}
+
+if(loadGame()){
+
+updateStatus();
+
+document.getElementById("game").innerHTML=
+
+"<h2>📖セーブデータ発見</h2>"+
+
+"<p>以前の冒険を続けますか？</p>"+
+
+"<button onclick='showVillage()'>▶続きから</button>"+
+
+"<button onclick='startGame()'>🆕最初から</button>";
+
+}else{
+
+updateStatus();
+
+}
+
+</script>
+
+</body>
+</html>
