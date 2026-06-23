@@ -3,7 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<title>畑を守る剣 Ver0.4</title>
+<title>畑を守る剣 Ver0.5</title>
+
 <style>
 body{
 font-family:sans-serif;
@@ -12,129 +13,233 @@ margin:auto;
 padding:15px;
 touch-action:manipulation;
 }
+
 button{
 font-size:20px;
 padding:12px;
 margin:5px;
 }
+
 #status{
 background:#f0f0f0;
 padding:10px;
 margin-bottom:10px;
+line-height:1.8;
 }
 </style>
 </head>
+
 <body>
+
 <h1>🌾 畑を守る剣 🌾</h1>
+
 <div id="status">
+
 LV:<span id="lv">1</span>
-　
-HP:<span id="hp">30</span>
-　
-🌿薬草:<span id="herb">3</span>
+
+HP:
+<span id="hp">30</span> /
+<span id="maxhp">30</span>
+
+<br>
+
+⭐EXP:
+<span id="exp">0</span>
+
+💰GOLD:
+<span id="gold">0</span>
+
+<br>
+
+🌿薬草:
+<span id="herb">3</span>
+
 </div>
+
 <div id="game">
+
 <p>🐔チャボ「コケーー！！」</p>
-<button onclick="startGame()">はじめから</button>
+
+<button onclick="startGame()">
+はじめから
+</button>
+
 </div>
+
 <script>
+
+const SAVE_KEY="hatakeSwordSave";
+
 let player={
 lv:1,
+exp:0,
+gold:0,
 hp:30,
+maxHp:30,
 herb:3
 };
+
 let enemyName="";
 let enemyHp=0;
+
 function updateStatus(){
+
 document.getElementById("lv").innerText=player.lv;
 document.getElementById("hp").innerText=player.hp;
+document.getElementById("maxhp").innerText=player.maxHp;
+document.getElementById("exp").innerText=player.exp;
+document.getElementById("gold").innerText=player.gold;
 document.getElementById("herb").innerText=player.herb;
+
 }
+
+function saveGame(){
+
+localStorage.setItem(
+SAVE_KEY,
+JSON.stringify(player)
+);
+
+}
+
+function loadGame(){
+
+const data=localStorage.getItem(SAVE_KEY);
+
+if(!data)return false;
+
+player=JSON.parse(data);
+
+return true;
+
+}
+
+function resetSave(){
+
+localStorage.removeItem(SAVE_KEY);
+
+alert("セーブデータを削除しました");
+
+location.reload();
+
+}
+
+function gainExp(amount){
+
+player.exp+=amount;
+
+while(player.exp>=player.lv*10){
+
+player.exp-=player.lv*10;
+
+player.lv++;
+
+player.maxHp+=10;
+
+player.hp=player.maxHp;
+
+alert(
+"レベルアップ！\n"+
+"LV"+player.lv+
+"\n最大HP+10"
+);
+
+}
+
+updateStatus();
+
+}
+
+function gainGold(amount){
+
+player.gold+=amount;
+
+updateStatus();
+
+}
+
 function startGame(){
+
 document.getElementById("game").innerHTML=
+
 "<h2>第1話 はじまりの畑</h2>"+
+
 "<p>👴村長『森の魔物を倒してくれ！』</p>"+
-"<button onclick='showVillage()'>🏡村へ</button>";
+
+"<button onclick='showVillage()'>🏡村へ</button>"+
+
+"<br><br>"+
+
+"<button onclick='saveGame()'>💾セーブ</button>"+
+
+"<button onclick='resetSave()'>🗑️初期化</button>";
+
 }
+
 function showVillage(){
+
 document.getElementById("game").innerHTML=
+
 "<h2>🏡村</h2>"+
+
 "<p>どこへ行く？</p>"+
+
 "<button onclick='showField()'>🌾畑</button>"+
-"<button onclick='startMole()'>🌲森</button>";
+
+"<button onclick='startMole()'>🌲森</button>"+
+
+"<br><br>"+
+
+"<button onclick='saveGame()'>💾セーブ</button>";
+
 }
+
 function showField(){
+
 document.getElementById("game").innerHTML=
+
 "<h2>🌾畑</h2>"+
+
 "<p>作物は元気に育っている。</p>"+
+
 "<p>🐔チャボ『平和が一番コケ〜♪』</p>"+
+
 "<button onclick='showVillage()'>戻る</button>";
+
 }
+
 function startMole(){
+
 enemyName="暴走モグラ";
 enemyHp=15;
+
 battleScreen();
+
 }
+
 function startWolfKing(){
+
 enemyName="森狼王";
 enemyHp=30;
+
 battleScreen();
+
 }
+
 function battleScreen(){
+
 document.getElementById("game").innerHTML=
+
 "<h2>⚔️戦闘</h2>"+
+
 "<p>👹"+enemyName+" が現れた！</p>"+
+
 "<p id='enemyhp'>敵HP:"+enemyHp+"</p>"+
+
 "<button onclick='attack(5)'>⚔️攻撃</button>"+
+
 "<button onclick='attack(8)'>💥強打</button>"+
+
 "<button onclick='useHerb()'>🌿薬草</button>";
+
 }
-function attack(power){
-enemyHp-=power;
-if(enemyHp<=0){
-if(enemyName==="暴走モグラ"){
-document.getElementById("game").innerHTML=
-"<h2>🎉勝利！</h2>"+
-"<p>暴走モグラを倒した！</p>"+
-"<button onclick='startWolfKing()'>森の奥へ</button>";
-return;
-}
-if(enemyName==="森狼王"){
-player.lv++;
-updateStatus();
-document.getElementById("game").innerHTML=
-"<h2>👑森狼王撃破！</h2>"+
-"<p>村に平和が戻った！</p>"+
-"<p>🐔チャボ『やったコケーー！！』</p>"+
-"<h3>Ver0.4クリア！</h3>";
-return;
-}
-}
-let damage=Math.floor(Math.random()*4)+3;
-player.hp-=damage;
-updateStatus();
-if(player.hp<=0){
-document.getElementById("game").innerHTML=
-"<h2>💀ゲームオーバー</h2>"+
-"<button onclick='location.reload()'>もう一度挑戦</button>";
-return;
-}
-document.getElementById("enemyhp").innerText=
-"敵HP:"+enemyHp;
-}
-function useHerb(){
-if(player.herb<=0){
-alert("薬草がない！");
-return;
-}
-player.herb--;
-player.hp+=10;
-if(player.hp>30){
-player.hp=30;
-}
-updateStatus();
-}
-updateStatus();
-</script>
-</body>
-</html
