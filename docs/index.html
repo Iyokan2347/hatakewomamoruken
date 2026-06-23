@@ -3,31 +3,115 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>畑を守る剣 Ver0.1β</title>
+<title>畑を守る剣 Ver0.2α</title>
+<style>
+body{
+font-family:sans-serif;
+max-width:700px;
+margin:auto;
+padding:15px;
+}
+button{
+font-size:18px;
+padding:10px;
+margin:5px;
+}
+#game{
+margin-top:20px;
+border:1px solid #ccc;
+padding:15px;
+min-height:250px;
+}
+#status{
+padding:10px;
+background:#f5f5f5;
+margin-bottom:10px;
+}
+</style>
 </head>
 <body>
-
 <h1>🌾 畑を守る剣 🌾</h1>
-
+<div id="status">
+LV: <span id="lv">1</span>
+　
+HP: <span id="hp">30</span>
+</div>
+<div id="game">
 <p>チャボ「コケーー！！」</p>
-
-<p>君は小さな村で畑を耕す農民だ。</p>
-
+<p>君は小さな村で暮らす農民だ。</p>
 <button onclick="startGame()">
 はじめから
 </button>
-
-<div id="game"></div>
-
+</div>
 <script>
-function startGame() {
+let player = {
+lv:1,
+hp:30
+};
+function updateStatus(){
+document.getElementById("lv").innerText = player.lv;
+document.getElementById("hp").innerText = player.hp;
+}
+function startGame(){
 document.getElementById("game").innerHTML =
 "<h2>第1話 はじまりの畑</h2>" +
-"<p>村長『大和よ、大変だ！森で魔物が暴れておる！』</p>" +
+"<p>村長『大和よ！森で魔物が暴れておる！』</p>" +
 "<p>チャボ『コケッ！』</p>" +
-"<p>🌲 森へ向かう冒険が始まった！</p>";
+"<button onclick='village()'>🏡 村を見て回る</button>";
 }
+function village(){
+document.getElementById("game").innerHTML =
+"<h2>🏡 村</h2>" +
+"<p>どこへ行く？</p>" +
+"<button onclick='chief()'>👴 村長の家</button>" +
+"<button onclick='field()'>🌾 畑</button>" +
+"<button onclick='forest()'>🌲 森</button>";
+}
+function chief(){
+document.getElementById("game").innerHTML =
+"<h2>👴 村長の家</h2>" +
+"<p>村長『森の魔物を何とかしてくれ！』</p>" +
+"<button onclick='village()'>戻る</button>";
+}
+function field(){
+document.getElementById("game").innerHTML =
+"<h2>🌾 畑</h2>" +
+"<p>今日も作物は元気だ。</p>" +
+"<p>チャボ『コケ〜♪』</p>" +
+"<button onclick='village()'>戻る</button>";
+}
+function forest(){
+document.getElementById("game").innerHTML =
+"<h2>🌲 森</h2>" +
+"<p>👹 暴走モグラが現れた！</p>" +
+"<p id='enemyhp'>敵HP: 15</p>" +
+"<button onclick='attack()'>⚔️ 攻撃</button>";
+enemyHp = 15;
+}
+let enemyHp = 15;
+function attack(){
+enemyHp -= 5;
+if(enemyHp <= 0){
+player.lv++;
+updateStatus();
+document.getElementById("game").innerHTML =
+"<h2>🎉 勝利！</h2>" +
+"<p>暴走モグラを倒した！</p>" +
+"<p>LVが上がった！</p>" +
+"<button onclick='ending()'>先へ進む</button>";
+return;
+}
+document.getElementById("enemyhp").innerText =
+"敵HP: " + enemyHp;
+}
+function ending(){
+document.getElementById("game").innerHTML =
+"<h2>📜 Ver0.2αクリア！</h2>" +
+"<p>村はひとまず平和になった。</p>" +
+"<p>次回、森狼王編へ続く！</p>" +
+"<button onclick='village()'>村へ戻る</button>";
+}
+updateStatus();
 </script>
-
 </body>
 </html>
