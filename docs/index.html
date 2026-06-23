@@ -1,2 +1,33 @@
-<h1>畑を守る剣</h1>
-<p>公開テスト成功！</p>
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>畑を守る剣 Ver0.1β</title>
+</head>
+<body>
+
+<h1>🌾 畑を守る剣 🌾</h1>
+
+<p>チャボ「コケーー！！」</p>
+
+<p>君は小さな村で畑を耕す農民だ。</p>
+
+<button onclick="startGame()">
+はじめから
+</button>
+
+<div id="game"></div>
+
+<script>
+function startGame() {
+document.getElementById("game").innerHTML =
+"<h2>第1話 はじまりの畑</h2>" +
+"<p>村長『大和よ、大変だ！森で魔物が暴れておる！』</p>" +
+"<p>チャボ『コケッ！』</p>" +
+"<p>🌲 森へ向かう冒険が始まった！</p>";
+}
+</script>
+
+</body>
+</html>
