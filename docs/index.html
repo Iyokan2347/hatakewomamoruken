@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<title>畑を守る剣 Ver0.3.1</title>
+<title>畑を守る剣 Ver0.4</title>
 <style>
 body{
 font-family:sans-serif;
@@ -15,52 +15,126 @@ touch-action:manipulation;
 button{
 font-size:20px;
 padding:12px;
-margin:8px;
+margin:5px;
+}
+#status{
+background:#f0f0f0;
+padding:10px;
+margin-bottom:10px;
 }
 </style>
 </head>
 <body>
 <h1>🌾 畑を守る剣 🌾</h1>
+<div id="status">
+LV:<span id="lv">1</span>
+　
+HP:<span id="hp">30</span>
+　
+🌿薬草:<span id="herb">3</span>
+</div>
 <div id="game">
 <p>🐔チャボ「コケーー！！」</p>
-<button onclick="startGame()">
-はじめから
-</button>
+<button onclick="startGame()">はじめから</button>
 </div>
 <script>
+let player={
+lv:1,
+hp:30,
+herb:3
+};
+let enemyName="";
+let enemyHp=0;
+function updateStatus(){
+document.getElementById("lv").innerText=player.lv;
+document.getElementById("hp").innerText=player.hp;
+document.getElementById("herb").innerText=player.herb;
+}
 function startGame(){
-document.getElementById("game").innerHTML =
-"<h2>第1話 はじまりの畑</h2>" +
-"<p>👴村長『森で魔物が暴れておる！』</p>" +
-"<p>🐔チャボ『コケッ！』</p>" +
+document.getElementById("game").innerHTML=
+"<h2>第1話 はじまりの畑</h2>"+
+"<p>👴村長『森の魔物を倒してくれ！』</p>"+
 "<button onclick='showVillage()'>🏡村へ</button>";
 }
 function showVillage(){
-document.getElementById("game").innerHTML =
-"<h2>🏡村</h2>" +
-"<p>どこへ行く？</p>" +
-"<button onclick='showField()'>🌾畑</button>" +
-"<button onclick='showForest()'>🌲森</button>";
+document.getElementById("game").innerHTML=
+"<h2>🏡村</h2>"+
+"<p>どこへ行く？</p>"+
+"<button onclick='showField()'>🌾畑</button>"+
+"<button onclick='startMole()'>🌲森</button>";
 }
 function showField(){
-document.getElementById("game").innerHTML =
-"<h2>🌾畑</h2>" +
-"<p>作物は元気に育っている。</p>" +
-"<p>🐔チャボ『平和が一番コケ〜♪』</p>" +
+document.getElementById("game").innerHTML=
+"<h2>🌾畑</h2>"+
+"<p>作物は元気に育っている。</p>"+
+"<p>🐔チャボ『平和が一番コケ〜♪』</p>"+
 "<button onclick='showVillage()'>戻る</button>";
 }
-function showForest(){
-document.getElementById("game").innerHTML =
-"<h2>🌲森</h2>" +
-"<p>👹暴走モグラが現れた！</p>" +
-"<p>⚔️勝利！</p>" +
-"<button onclick='ending()'>先へ進む</button>";
+function startMole(){
+enemyName="暴走モグラ";
+enemyHp=15;
+battleScreen();
 }
-function ending(){
-document.getElementById("game").innerHTML =
-"<h2>🎉Ver0.3.1クリア！</h2>" +
-"<p>次回、森狼王編！</p>";
+function startWolfKing(){
+enemyName="森狼王";
+enemyHp=30;
+battleScreen();
 }
+function battleScreen(){
+document.getElementById("game").innerHTML=
+"<h2>⚔️戦闘</h2>"+
+"<p>👹"+enemyName+" が現れた！</p>"+
+"<p id='enemyhp'>敵HP:"+enemyHp+"</p>"+
+"<button onclick='attack(5)'>⚔️攻撃</button>"+
+"<button onclick='attack(8)'>💥強打</button>"+
+"<button onclick='useHerb()'>🌿薬草</button>";
+}
+function attack(power){
+enemyHp-=power;
+if(enemyHp<=0){
+if(enemyName==="暴走モグラ"){
+document.getElementById("game").innerHTML=
+"<h2>🎉勝利！</h2>"+
+"<p>暴走モグラを倒した！</p>"+
+"<button onclick='startWolfKing()'>森の奥へ</button>";
+return;
+}
+if(enemyName==="森狼王"){
+player.lv++;
+updateStatus();
+document.getElementById("game").innerHTML=
+"<h2>👑森狼王撃破！</h2>"+
+"<p>村に平和が戻った！</p>"+
+"<p>🐔チャボ『やったコケーー！！』</p>"+
+"<h3>Ver0.4クリア！</h3>";
+return;
+}
+}
+let damage=Math.floor(Math.random()*4)+3;
+player.hp-=damage;
+updateStatus();
+if(player.hp<=0){
+document.getElementById("game").innerHTML=
+"<h2>💀ゲームオーバー</h2>"+
+"<button onclick='location.reload()'>もう一度挑戦</button>";
+return;
+}
+document.getElementById("enemyhp").innerText=
+"敵HP:"+enemyHp;
+}
+function useHerb(){
+if(player.herb<=0){
+alert("薬草がない！");
+return;
+}
+player.herb--;
+player.hp+=10;
+if(player.hp>30){
+player.hp=30;
+}
+updateStatus();
+}
+updateStatus();
 </script>
 </body>
-</html>
+</html
